@@ -1,0 +1,12 @@
+class geometriskaTalfoljder():
+    
+    def geoTalMulti(self, bas, kvot, antal):
+        svar = bas*(kvot**(antal-1))
+        return svar
+
+    def geoTalAddering(self, bas, kvot, antal):
+        svar = bas+(kvot*(antal-1))
+        return svar
+
+print(geometriskaTalfoljder().geoTalMulti(3, 5, 5))
+print(geometriskaTalfoljder().geoTalAddering(1, 2, 5))
