@@ -1,11 +1,11 @@
 class talfoljder():
     
-    def geometriskTalfoljd(self, bas, kvot, antal):
-        svar = bas*(kvot**(antal-1))
+    def geometriskTalfoljd(self, bas, differans, antal):
+        svar = bas*(differans**(antal-1))
         return svar
 
-    def aritmetiskTalfoljd(self, bas, kvot, antal):
-        svar = bas+(kvot*(antal-1))
+    def aritmetiskTalfoljd(self, bas, differans, antal):
+        svar = bas+(differans*(antal-1))
         return svar
 
 print(geometriskaTalfoljder().geometriskTalfoljd(3, 5, 5))
