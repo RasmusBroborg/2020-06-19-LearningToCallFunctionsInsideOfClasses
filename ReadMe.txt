@@ -1,0 +1,1 @@
+A repo for all python coding challenges that are not part of any specific project.
