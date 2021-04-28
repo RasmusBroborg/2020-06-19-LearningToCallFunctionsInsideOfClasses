@@ -1,4 +1,4 @@
-def vowelCounting():
+def vowelCount():
     x = input("Write a word or a sentence: ")
     lenOfInput = len(x)
     vowelCount = 0
