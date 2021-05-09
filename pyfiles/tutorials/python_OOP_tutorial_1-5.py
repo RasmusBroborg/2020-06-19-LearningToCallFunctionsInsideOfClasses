@@ -115,6 +115,9 @@ def video_three():
 
     print(Employee.is_workday(my_date))
 
+# Test code by running function:
+# video_three()
+
 
 # ------- VIDEO 4 --------
 # https://www.youtube.com/watch?v=RSl87lqOXDE
@@ -186,7 +189,61 @@ def video_four():
 
 
 # Test code by running function:
-# video_one()
-# video_two()
-# video_three()
-video_four()
+# video_four()
+
+def video_five():
+    class Employee:
+
+        # Class variables
+        raise_amount = 1.04
+
+        # Class init method
+
+        def __init__(self, firstname, lastname, pay):
+            self.firstname = firstname
+            self.lastname = lastname
+            self.email = firstname + \
+                '.' + lastname + '@gmail.com'
+            self.pay = pay
+
+        # methods
+        def fullname(self):
+            return '{} {}'.format(self.firstname, self.lastname)
+
+        def apply_raise(self):
+            self.pay = int(float(self.pay) * self.raise_amount)
+
+        def __repr__(self):
+            return "Employee('{}', '{}', {})".format(self.firstname, self.lastname, self.pay)
+
+        def __str__(self):
+            return '{}, - {}'.format(self.fullname(), self.email)
+
+        def __add__(self, other):
+            return int(self.pay) + int(other.pay)
+
+        def __len__(self):
+            return len(self.fullname())
+
+    emp_1 = Employee('John', 'Smith', '30000')
+    emp_2 = Employee('Testing', 'User', '22000')
+
+    print(len(emp_1))
+
+    print('test'.__len__())
+
+    # print(emp_1 + emp_2)
+
+    # print(repr(emp_1))
+    # print(str(emp_1))
+
+    # print(emp_1.__repr__())
+    # print(emp_1.__str__())
+
+    # print(int.__add__(1, 2))
+    # print(str.__add__("1", "2"))
+
+
+
+# Test code by running function:
+video_five()
