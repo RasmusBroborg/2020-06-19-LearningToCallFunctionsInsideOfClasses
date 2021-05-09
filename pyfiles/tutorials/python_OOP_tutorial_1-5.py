@@ -191,6 +191,10 @@ def video_four():
 # Test code by running function:
 # video_four()
 
+
+# ------- VIDEO 5 --------
+# https://www.youtube.com/watch?v=3ohzBxoFHAY&t
+
 def video_five():
     class Employee:
 
@@ -243,7 +247,53 @@ def video_five():
     # print(int.__add__(1, 2))
     # print(str.__add__("1", "2"))
 
+# Test code by running function:
+# video_five()
+
+
+# ------- VIDEO 6 --------
+# https://www.youtube.com/watch?v=jCzT9XFZ5bw
+
+def video_six():
+    class Employee:
+
+        def __init__(self, firstname, lastname):
+            self.firstname = firstname
+            self.lastname = lastname
+
+        # methods
+        @property
+        def email(self):
+            return str.lower('{}.{}@gmail.com'.format(self.firstname, self.lastname))
+
+        @property
+        def fullname(self):
+            return '{} {}'.format(self.firstname, self.lastname)
+
+        @fullname.setter
+        def fullname(self, name):
+            firstname, lastname = name.split(' ')
+            self.firstname = firstname
+            self.lastname = lastname
+
+        @fullname.deleter
+        def fullname(self):
+            print('Delete Name!')
+            self.firstname = None
+            self.lastname = None
+
+    emp_1 = Employee('John', 'Smith')
+
+    emp_1.firstname = 'Jim'
+
+    emp_1.fullname = 'Jumbo Smath'
+
+    del emp_1.fullname
+
+    print(emp_1.firstname)
+    print(emp_1.email)
+    print(emp_1.fullname)
 
 
 # Test code by running function:
-video_five()
+# video_six()
