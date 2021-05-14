@@ -4,10 +4,10 @@ import sys
 # EACH SQUARE 100x100
 # Width has two extra rows of pixels to compensate for line draws.
 # Height has extra 2 px for lines and extra 30 px for score bar at the top.
-#GAMEBAR_WIDTH = 100
-#GAMEBAR_HEIGHT = 30
+# GAMEBAR_WIDTH = 100
+# GAMEBAR_HEIGHT = 30
 DISPLAY_WIDTH = 300
-DISPLAY_HEIGHT = 300  # + GAMEBAR_HEIGHT
+DISPLAY_HEIGHT = 300
 # Update frequency. Lower to decrease risk of double click
 FPS = 10
 
@@ -16,67 +16,23 @@ COLOR_GREY = (125, 125, 125)
 COLOR_WHITE = (255, 255, 255)
 
 
-"""
-Game:
-
-- Create board (list?) (class?)
-    - init draw line at x 100px and x 200px
-    - init Create zones
-    - Init zone as empty (None?)
-    - Init player (start?)
-
-    - func to assign selected players
-        - event mouse click px zone add value to zone
-
-    - func to switch_player
-        - if player x:
-            player = o
-        - if player o:
-            player = x
-
-    - func to print which players turn it is:
-        -
-
-- Create reset_game (if player click area, reset game)
-
--
-
-"""
-
-
-class Cell():
-    def __init__(self, x, y, width, height):
-        self.char_assignment = None
-        self.positional_info = (self.x)
-
-
 class Board:
     def __init__(self):
-        self.lines = pygame.draw.aaline(
-            game_display, COLOR_WHITE, 0, 50)
         self.player_o = "O"
         self.player_x = "X"
         self.player_x_score = 0
         self.player_o_score = 0
         self.round_count = 0
-        self.turn = 1
-        self.selected_player = player_x
+        self.turn = 0
 
-        self.cell_0 = Cell()
-        self.cell_1 = Cell()
-        self.cell_2 = Cell()
+        self.board_cells = ["", "", "",
+                            "", "", "",
+                            "", "", ""]
 
-        self.cell_3 = Cell()
-        self.cell_4 = Cell()
-        self.cell_5 = Cell()
-
-        self.cell_6 = Cell()
-        self.cell_7 = Cell()
-        self.cell_8 = Cell()
-
-        self.board_cells = [self.cell_0, self.cell_1, self.cell_2,
-                            self.cell_3, self.cell_4, self.cell_5,
-                            self.cell_6, self.cell_7, self.cell_8, ]
+        # Turn variables:
+        self.selected_player = self.player_x
+        self.mouse_position = None
+        self.selected_cell = None
 
     # DENNA MÅSTE SES ÖVER! SKA STARTA OM SPELET??
 
@@ -85,53 +41,102 @@ class Board:
             self.player_o_score += 1
         elif selected_player == self.player_x:
             self.player_x_score += 1
-
+    """
+    # Too buggy, doesn't work.
     def draw(self):
-        pass
-        # if self.turn
+        pygame.draw.aaline(
+            game_display, COLOR_WHITE, 0, 50)
+    """
 
     def player_switch(self):
-        if self.selected_player == player_x:
-            self.selected_player = player_o
-        elif self.selected_player == player_o:
-            self.selected_player = player_x
-
-    def upd_turn_count(self):
-        self.turn += 1
+        if self.selected_player == self.player_x:
+            self.selected_player = self.player_o
+        elif self.selected_player == self.player_o:
+            self.selected_player = self.player_x
 
     def display_score(self):
         pass
 
-    def game_logic():
-        pass
+    def get_cellindex_from_mouseclick_pos(self, xy):
+        # board_cells[0]
+        if xy[0] < DISPLAY_WIDTH / 3 * 1 and xy[1] < DISPLAY_HEIGHT / 3 * 1:
+            self.selected_cell = 0
+        elif xy[0] < DISPLAY_WIDTH / 3 * 1 and xy[1] < DISPLAY_HEIGHT / 3 * 2:
+            self.selected_cell = 1
+        elif xy[0] < DISPLAY_WIDTH / 3 * 1 and xy[1] < DISPLAY_HEIGHT / 3 * 3:
+            self.selected_cell = 2
 
+        elif xy[0] < DISPLAY_WIDTH / 3 * 2 and xy[1] < DISPLAY_HEIGHT / 3 * 1:
+            self.selected_cell = 3
+        elif xy[0] < DISPLAY_WIDTH / 3 * 2 and xy[1] < DISPLAY_HEIGHT / 3 * 2:
+            self.selected_cell = 4
+        elif xy[0] < DISPLAY_WIDTH / 3 * 2 and xy[1] < DISPLAY_HEIGHT / 3 * 3:
+            self.selected_cell = 5
+
+        elif xy[0] < DISPLAY_WIDTH / 3 * 3 and xy[1] < DISPLAY_HEIGHT / 3 * 1:
+            self.selected_cell = 6
+        elif xy[0] < DISPLAY_WIDTH / 3 * 3 and xy[1] < DISPLAY_HEIGHT / 3 * 2:
+            self.selected_cell = 7
+        elif xy[0] < DISPLAY_WIDTH / 3 * 3 and xy[1] < DISPLAY_HEIGHT / 3 * 3:
+            self.selected_cell = 8
+
+    def check_if_win(self):
+        winner_string = self.selected_player * 3
+        if (self.board_cells[0] + self.board_cells[1] + self.board_cells[2]) or (self.board_cells[3] + self.board_cells[4] + self.board_cells[5]) or (self.board_cells[6] + self.board_cells[7] + self.board_cells[8]) or (self.board_cells[0] + self.board_cells[3] + self.board_cells[6]) or (self.board_cells[1] + self.board_cells[4] + self.board_cells[7]) or (self.board_cells[2] + self.board_cells[5] + self.board_cells[8]) or (self.board_cells[0] + self.board_cells[4] + self.board_cells[8]) == (winner_string):
+            print("Player {} wins!".format(self.selected_player))
+        return True
+
+    def upd_next_turn(self):
+        self.turn += 1
+        self.self.mouse_position = None
+        self.selected_cell = None
+
+    def game_logic(self):
+        if self.selected_cell != None:
+            self.board_cells[self.selected_cell] = self.selected_player
+            print("IT WORKs!")
+            self.check_if_win()
+
+            self.player_switch()
+            self.mouse_position = None
+            self.selected_cell = None
+
+        # Resetting turn variables
+
+        """
+        if player_selected_cell != None:
+            if player_selected_cell[0] < (DISPLAY_WIDTH * 0.33)
+        """
 
 def main():
 
-    game_display = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
+    game_display = pygame.display.set_mode((DISPLAY_WIDTH,
+                                            DISPLAY_HEIGHT))
     pygame.display.set_caption('Tic-Tac-Toe')
 
-    reset_game = False
+    board = Board()
 
-    # Board init
-    board = Board
+    # basic_font = pygame.font.Font('freesansbold.ttf', 32)
 
-    #basic_font = pygame.font.Font('freesansbold.ttf', 32)
-
-    while not reset_game:
+    while True:
 
         for event in pygame.event.get():
-            print(event)
+            print(event.type)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            # if event.type ==
-            #
+
+            if event.type == 1025:
+                board.mouseclick_pos = pygame.mouse.get_pos()
+                board.get_cellindex_from_mouseclick_pos(board.mouseclick_pos)
 
         board.game_logic()
+        # board.draw()
 
         pygame.display.update()
         pygame.time.Clock().tick(FPS)
+
+        # board.reset()
 
 
 if __name__ == "__main__":

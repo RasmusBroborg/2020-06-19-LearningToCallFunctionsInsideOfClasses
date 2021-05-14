@@ -114,3 +114,9 @@ def test_import_file():
 
 
 # test_import_file()
+
+
+my_tuple = (1, 2)
+print(my_tuple[1])
+
+print("Hello")
