@@ -1,38 +1,25 @@
 import pygame
 import sys
 
-DISPLAY_WIDTH = 300
-DISPLAY_HEIGHT = 300
-FPS = 10
-
-COLOR_BLACK = (0, 0, 0)
-COLOR_GREY = (125, 125, 125)
-COLOR_WHITE = (255, 255, 255)
-
-game_display = pygame.display.set_mode((DISPLAY_WIDTH,
-                                        DISPLAY_HEIGHT))
-pygame.display.set_caption('Tic-Tac-Toe')
-
 
 class Board:
     def __init__(self):
         self.board_list = [
             ["", "", ""],
-            ["", "", ""],
+            ["", "X", ""],
             ["", "", ""]
         ]
 
     def check_board_availability(self, row, column):
 
         if self.board_list[row][column] != "":
-
             print("Not available. Contains: {}".format(
                 self.board_list[row][column]))
+        else:
+            print("Available for selection.")
 
 
-board = Board()
-
-def draw_display():
+def draw_display(game_display):
 
     game_display.fill(COLOR_BLACK)
     # Drawing vertical lines:
@@ -78,7 +65,16 @@ def sel_square_position(m_pos):
 
         return sel_row, sel_pos_in_row
 
+
 def main():
+
+    DISPLAY_WIDTH = 300
+    DISPLAY_HEIGHT = 300
+    FPS = 10
+
+    COLOR_BLACK = (0, 0, 0)
+    COLOR_GREY = (125, 125, 125)
+    COLOR_WHITE = (255, 255, 255)
 
     game_display = pygame.display.set_mode((DISPLAY_WIDTH,
                                             DISPLAY_HEIGHT))
@@ -114,7 +110,7 @@ def main():
 
         # VISUALS
 
-        draw_display()
+        draw_display(game_display)
 
         # pygame.display.flip()
 

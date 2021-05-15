@@ -1,116 +1,163 @@
-def keyword_assert():
-    """
-    The assert keyword is used when debugging code.
-    The assert keyword lets you test if a condition in your code returns True,
-    if not, the program will raise an AssertionError.
-    """
+import pygame
+import sys
 
-    x = 'Hello'
+COLOR_BLACK = (0, 0, 0)
+COLOR_GREY = (125, 125, 125)
+COLOR_WHITE = (255, 255, 255)
 
-    # if condition returns True, nothing happens:
-    assert x == 'Hello'
-
-    # if condition returns False, AssertionError is raised:
-    assert x == 'Goodbye', 'x should be "Hello"'
+DISPLAY_WIDTH = 300
+DISPLAY_HEIGHT = 300
+FPS = 10
 
 
-# assert_keyword()
+class Board:
+    def __init__(self):
+        self.board_list = [
+            ["", "", ""],
+            ["", "X", ""],
+            ["", "", ""]
+        ]
+
+        self.player_x = "X"
+        self.player_o = "O"
+        self.current_player = None
+
+        self.num_of_wins_player_x = 0
+        self.num_of_wins_player_o = 0
+
+        self.turn = 0
+
+    def check_board_availability(self, row, column):
+
+        if self.board_list[row][column] != "":
+            print("Not available. Contains: {}".format(
+                self.board_list[row][column]))
+            return False
+
+        else:
+            print("Available for selection.")
+            return True
+
+    def next_turn(self):
+        # Switching players:
+        if self.current_player == self.player_x:
+            self.current_player == self.player_o
+        elif self.current_player == self.player_o:
+            self.current_player == self.player_x
+        elif self.current_player == None:
+            self.current_player == self.player_x
+
+        # Increment turn count:
+        self.turn += 1
+
+        # Inform player about turn:
+        print("Turn #{}. Player {}:".format(
+            self.turn, self.current_player))
+
+    def player_win(self, current_player):
+        if current_player == self.player_o:
+            num_of_wins_player_o += 1
+        if current_player == self.player_x:
+            num_of_wins_player_x += 1
+
+    def board_reset(self):
+        self.board_list = [
+            ["", "", ""],
+            ["", "", ""],
+            ["", "", ""]
+        ]
 
 
-def type_numeric():
-    """
-    There are three numeric types in Python:
-    - int
-    - float
-    - complex
+def draw_display(game_display):
 
-    """
-    x = 1    # int
-    y = 2.2e-10  # float
-    z = 1j   # complex
-
-    x = complex(x)
-
-    print(x, y, z)
-    print(type(z))
-    print(type(y))
-
-
-# type_numeric()
-
-def type_collections():
-    """
-    There are four collection data types in the Python programming language:
-
-    - List is a collection which is ordered and changeable. Allows duplicate members.
-    - Tuple is a collection which is ordered and unchangeable. Allows duplicate members.
-    - Set is a collection which is unordered and unindexed. No duplicate members.
-    - Dictionary is a collection which is ordered* and changeable. No duplicate members.
-    """
-
-    def my_list():
-        # List items are ordered, changeable, and allow duplicate values.
-        # Can contain different data types.
-
-        list_1 = ['banana', 4, 1e2, 'banana']
-
-        print(type(list_1[2]))
-        print(type(list_1))
-        print(type(list_1[1]))
-        print(list_1)
-
-        # You can also create a list using the list() constructor:
-        list_2 = list(('abba', 2, 'gemini'))
-        print(list_2)
-        print(type(list_2))
-
-    # my_list()
-
-    def my_tuple():
-        # A tuple is a collection which is ordered and unchangeable.
-        # More memory efficient than lists == less space and a tad bit faster.
-        # Written with round brackets ().
-
-        thistuple = ('ham', 'bacon', 2)
-
-        print(thistuple)
-        try:
-            thistuple[1] = 'jelly'
-        except TypeError:
-            print('TypeError. Next except message will not be shown.')
-        except:
-            print('Tuples are unchangeable.')
-        finally:
-            print("Cleanup, irrespective of any exceptions.")
-
-    # my_tuple()
-
-    def my_set():
-        # Also known as
-        # Set items are unordered, unchangeable, and do not allow duplicate values.
-        # Sets are written with curly brackets.
-        list_with_duplicates = [1, 3, 2, 3, 1, 3, 2]
-        set_without_duplicates = set(list_with_duplicates)
-
-        print(type(set_without_duplicates))
-        print(set_without_duplicates)
-
-    # my_set()
+    game_display.fill(COLOR_BLACK)
+    # Drawing vertical lines:
+    pygame.draw.aaline(game_display, COLOR_WHITE,
+                       (int(DISPLAY_WIDTH * 0.33), 0),
+                       (int(DISPLAY_WIDTH * 0.33), DISPLAY_HEIGHT))
+    pygame.draw.aaline(game_display, COLOR_WHITE,
+                       (int(DISPLAY_WIDTH * 0.66), 0),
+                       (int(DISPLAY_WIDTH * 0.66), DISPLAY_HEIGHT))
+    # Drawing horizontal lines:
+    pygame.draw.aaline(game_display, COLOR_WHITE,
+                       (0, int(DISPLAY_HEIGHT * 0.33)),
+                       (DISPLAY_WIDTH, int(DISPLAY_HEIGHT * 0.33)))
+    pygame.draw.aaline(game_display, COLOR_WHITE,
+                       (0, int(DISPLAY_HEIGHT * 0.66)),
+                       (DISPLAY_WIDTH, int(DISPLAY_HEIGHT * 0.66)))
 
 
-# type_collections()
+def sel_square_position(m_pos):
+    # Gets the list adress for the board squares based on the mouseclick pos.
+    if m_pos != [[None], [None]]:
+        print("Sel x pos is {}, and sel y pos is {}.".format(
+            m_pos[0], m_pos[1]))
 
-def test_import_file():
+        # Get which row in board list from mouse click y pos:
+        if m_pos[1] < 100 and m_pos[1] >= 0:
+            sel_row = 0
+        elif m_pos[1] < 200:
+            sel_row = 1
+        elif m_pos[1] < 301:
+            sel_row = 2
 
-    file1 = open('test_text.txt', 'r')
-    lines = file1.readlines()
+        # Get which position in row from mouse click x pos:
+        if m_pos[0] < 100 and m_pos[1] >= 0:
+            sel_pos_in_row = 0
+        elif m_pos[0] < 200:
+            sel_pos_in_row = 1
+        elif m_pos[0] < 301:
+            sel_pos_in_row = 2
 
-    print(lines)
+        print("Sel_row is {}, and sel_rowpos is {}.".format(
+            sel_row, sel_pos_in_row))
 
-    count = 0
-    for line in lines:
-        count += 1
-        print('Line {}: {}'.format(count, line))
+        return sel_row, sel_pos_in_row
 
 
-# test_import_file()
+def main():
+
+    game_display = pygame.display.set_mode((DISPLAY_WIDTH,
+                                            DISPLAY_HEIGHT))
+    pygame.display.set_caption('Tic-Tac-Toe')
+
+    board = Board()
+
+    board.next_turn()
+
+    while True:
+        # Reset:
+        sel_row = None
+        sel_pos_in_row = None
+
+        # Game start:
+
+        for event in pygame.event.get():
+            # print(event.type)
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # If mouse click on display surface:
+            if event.type == 1025:
+                sel_square_pos = sel_square_position(pygame.mouse.get_pos())
+
+                print(sel_square_pos)
+
+                if board.check_board_availability(
+                        sel_square_pos[0], sel_square_pos[1]) == True:
+                    board.board_list[sel_square_pos[0]
+                                     ][sel_square_pos[1]] = board.current_player
+
+                    # VISUALS
+
+        draw_display(game_display)
+
+        # pygame.display.flip()
+
+        pygame.display.update()
+        pygame.time.Clock().tick(FPS)
+
+
+if __name__ == "__main__":
+    main()
