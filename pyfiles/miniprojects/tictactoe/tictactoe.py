@@ -1,137 +1,127 @@
 import pygame
 import sys
 
-# EACH SQUARE 100x100
-# Width has two extra rows of pixels to compensate for line draws.
-# Height has extra 2 px for lines and extra 30 px for score bar at the top.
-#GAMEBAR_WIDTH = 100
-#GAMEBAR_HEIGHT = 30
 DISPLAY_WIDTH = 300
-DISPLAY_HEIGHT = 300  # + GAMEBAR_HEIGHT
-# Update frequency. Lower to decrease risk of double click
+DISPLAY_HEIGHT = 300
 FPS = 10
 
 COLOR_BLACK = (0, 0, 0)
 COLOR_GREY = (125, 125, 125)
 COLOR_WHITE = (255, 255, 255)
 
-
-"""
-Game:
-
-- Create board (list?) (class?)
-    - init draw line at x 100px and x 200px
-    - init Create zones
-    - Init zone as empty (None?)
-    - Init player (start?)
-
-    - func to assign selected players
-        - event mouse click px zone add value to zone
-
-    - func to switch_player
-        - if player x:
-            player = o
-        - if player o:
-            player = x
-
-    - func to print which players turn it is:
-        -
-
-- Create reset_game (if player click area, reset game)
-
--
-
-"""
-
-
-class Cell():
-    def __init__(self, x, y, width, height):
-        self.char_assignment = None
-        self.positional_info = (self.x)
+game_display = pygame.display.set_mode((DISPLAY_WIDTH,
+                                        DISPLAY_HEIGHT))
+pygame.display.set_caption('Tic-Tac-Toe')
 
 
 class Board:
     def __init__(self):
-        self.lines = pygame.draw.aaline(
-            game_display, COLOR_WHITE, 0, 50)
-        self.player_o = "O"
-        self.player_x = "X"
-        self.player_x_score = 0
-        self.player_o_score = 0
-        self.round_count = 0
-        self.turn = 1
-        self.selected_player = player_x
+        self.board_list = [
+            ["", "", ""],
+            ["", "", ""],
+            ["", "", ""]
+        ]
 
-        self.cell_0 = Cell()
-        self.cell_1 = Cell()
-        self.cell_2 = Cell()
+    def check_board_availability(self, row, column):
 
-        self.cell_3 = Cell()
-        self.cell_4 = Cell()
-        self.cell_5 = Cell()
+        if self.board_list[row][column] != "":
 
-        self.cell_6 = Cell()
-        self.cell_7 = Cell()
-        self.cell_8 = Cell()
+            print("Not available. Contains: {}".format(
+                self.board_list[row][column]))
 
-        self.board_cells = [self.cell_0, self.cell_1, self.cell_2,
-                            self.cell_3, self.cell_4, self.cell_5,
-                            self.cell_6, self.cell_7, self.cell_8, ]
 
-    # DENNA MÅSTE SES ÖVER! SKA STARTA OM SPELET??
+board = Board()
 
-    def player_win(self, selected_player):
-        if selected_player == self.player_o:
-            self.player_o_score += 1
-        elif selected_player == self.player_x:
-            self.player_x_score += 1
+def draw_display():
 
-    def draw(self):
-        pass
-        # if self.turn
+    game_display.fill(COLOR_BLACK)
+    # Drawing vertical lines:
+    pygame.draw.aaline(game_display, COLOR_WHITE,
+                       (int(DISPLAY_WIDTH * 0.33), 0),
+                       (int(DISPLAY_WIDTH * 0.33), DISPLAY_HEIGHT))
+    pygame.draw.aaline(game_display, COLOR_WHITE,
+                       (int(DISPLAY_WIDTH * 0.66), 0),
+                       (int(DISPLAY_WIDTH * 0.66), DISPLAY_HEIGHT))
+    # Drawing horizontal lines:
+    pygame.draw.aaline(game_display, COLOR_WHITE,
+                       (0, int(DISPLAY_HEIGHT * 0.33)),
+                       (DISPLAY_WIDTH, int(DISPLAY_HEIGHT * 0.33)))
+    pygame.draw.aaline(game_display, COLOR_WHITE,
+                       (0, int(DISPLAY_HEIGHT * 0.66)),
+                       (DISPLAY_WIDTH, int(DISPLAY_HEIGHT * 0.66)))
 
-    def player_switch(self):
-        if self.selected_player == player_x:
-            self.selected_player = player_o
-        elif self.selected_player == player_o:
-            self.selected_player = player_x
 
-    def upd_turn_count(self):
-        self.turn += 1
+def sel_square_position(m_pos):
+    # Gets the list adress for the board squares based on the mouseclick pos.
+    if m_pos != [[None], [None]]:
+        print("Sel x pos is {}, and sel y pos is {}.".format(
+            m_pos[0], m_pos[1]))
 
-    def display_score(self):
-        pass
+        # Get which row in board list from mouse click y pos:
+        if m_pos[1] < 100 and m_pos[1] >= 0:
+            sel_row = 0
+        elif m_pos[1] < 200:
+            sel_row = 1
+        elif m_pos[1] < 301:
+            sel_row = 2
 
-    def game_logic():
-        pass
+        # Get which position in row from mouse click x pos:
+        if m_pos[0] < 100 and m_pos[1] >= 0:
+            sel_pos_in_row = 0
+        elif m_pos[0] < 200:
+            sel_pos_in_row = 1
+        elif m_pos[0] < 301:
+            sel_pos_in_row = 2
 
+        print("Sel_row is {}, and sel_rowpos is {}.".format(
+            sel_row, sel_pos_in_row))
+
+        return sel_row, sel_pos_in_row
 
 def main():
 
-    game_display = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
+    game_display = pygame.display.set_mode((DISPLAY_WIDTH,
+                                            DISPLAY_HEIGHT))
     pygame.display.set_caption('Tic-Tac-Toe')
 
-    reset_game = False
+    board = Board()
 
-    # Board init
-    board = Board
+    # basic_font = pygame.font.Font('freesansbold.ttf', 32)
 
-    #basic_font = pygame.font.Font('freesansbold.ttf', 32)
+    while True:
+        # Reset:
+        sel_row = None
+        sel_pos_in_row = None
 
-    while not reset_game:
+        # Game start:
 
         for event in pygame.event.get():
-            print(event)
+            print(event.type)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            # if event.type ==
-            #
 
-        board.game_logic()
+            # If mouse click on display surface:
+            if event.type == 1025:
+                sel_square_pos = sel_square_position(pygame.mouse.get_pos())
+
+                print(sel_square_pos)
+                print(sel_square_pos[0])
+                print(sel_square_pos[1])
+
+                board.check_board_availability(
+                    sel_square_pos[0], sel_square_pos[1])
+
+        # VISUALS
+
+        draw_display()
+
+        # pygame.display.flip()
 
         pygame.display.update()
         pygame.time.Clock().tick(FPS)
+
+        # board.reset()
 
 
 if __name__ == "__main__":
