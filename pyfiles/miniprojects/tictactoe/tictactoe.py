@@ -1,8 +1,7 @@
 """
 
-Testing if I can create Tic-Tac-Toe in pygame using my current
-knowledge of python/pygame, without following a guide / other
-persons version of the game (no googling for Tic-Tac_Toe).
+Testing if I can create Tic-Tac-Toe without following a guide or
+googling solutions for
 
 """
 
@@ -19,14 +18,14 @@ DISPLAY_HEIGHT = 300
 FPS = 10
 
 
-def debug_board_status(board_list):
+def debug_board(board_list):
     print(board_list)
 
 
 class Board:
     def __init__(self):
         self.board_list = [
-            ["X", "X", "X"],
+            ["", "", ""],
             ["", "", ""],
             ["", "", ""]
         ]
@@ -62,24 +61,6 @@ class Board:
         else:
             print("Available for selection.")
             return True
-
-    def check_win(self):
-        b_list = self.board_list
-        player_winstring = self.current_player * 3
-
-        # Check row matches current players string:
-        if b_list[0][0] + b_list[0][1] + b_list[0][2] == player_winstring:
-            return True
-
-        # Check column win:
-
-        # Check diagonal win
-
-        if b_list[0] == 0:
-            return True
-
-        else:
-            return False
 
     def next_turn(self):
 
@@ -120,13 +101,14 @@ class Board:
 
     def player_win(self, current_player):
         if current_player == self.player_o:
-            num_of_wins_player_o += 1
+            self.num_of_wins_player_o += 1
         if current_player == self.player_x:
-            num_of_wins_player_x += 1
+            self.num_of_wins_player_x += 1
+
+        print("\nPlayer {} wins the round!\n".format(self.current_player))
 
 
 def draw_display(game_display):
-
     game_display.fill(COLOR_BLACK)
     # Drawing vertical lines:
     pygame.draw.aaline(game_display, COLOR_WHITE,
@@ -172,6 +154,73 @@ def sel_square_position(m_pos):
         return sel_row, sel_pos_in_row
 
 
+def check_win(board, sel_player):
+    """
+    check_win()-func returns True if any of the nested functions return True
+    """
+
+    def get_winning_combination(board, sel_player):
+        win_combo = []
+        for i in range(len(board)):
+            win_combo.append(sel_player)
+
+        print('\nWinning combination is: {}\n'.format(win_combo))
+        return win_combo
+
+    def check_rows_for_win(board, winning_combo):
+        for i in range(len(board)):
+
+            print('Row #{} contains: {}'.format(i, board[i]))
+
+            if board[i] == winning_combo:
+                print("Horizontal win.")
+                return True
+
+    def check_columns_for_win(board, winning_combo):
+        for i in range(len(board)):
+
+            column = [board[0][i]] + \
+                [board[1][i]] + [board[2][i]]
+
+            print('Column #{} contains: {}'.format(i, column))
+
+            if column == winning_combo:
+                print("Vertical win.")
+                return True
+
+    def check_diagonals_for_win(board, winning_combo):
+
+        # Diagonal top to bottom
+        diagonal_top_to_bottom = []
+        for i in range(len(board)):
+            diagonal_top_to_bottom.insert(i, board[i][i])
+        print('Diagonal top to bottom contains {}'.format(diagonal_top_to_bottom))
+
+        # Diagonal bottom to top
+        diagonal_bottom_to_top = []
+        for i in range(len(board)):
+            board_index = (len(board) - i - 1)
+
+            diagonal_bottom_to_top.insert(
+                i, board[i][board_index])
+        print('Diagonal bottom to top contains {}'.format(diagonal_bottom_to_top))
+
+        if diagonal_top_to_bottom == winning_combo or diagonal_bottom_to_top == winning_combo:
+            print("Diagonal win.")
+            return True
+
+    # Running the nested functions
+
+    winning_combination = get_winning_combination(board, sel_player)
+    row_win = check_rows_for_win(board, winning_combination)
+    column_win = check_columns_for_win(board, winning_combination)
+    diagonal_win = check_diagonals_for_win(board, winning_combination)
+
+    if row_win == True or column_win == True or diagonal_win == True:
+        print("Debug: WIN!")
+        return True
+
+
 def main():
 
     game_display = pygame.display.set_mode((DISPLAY_WIDTH,
@@ -182,7 +231,7 @@ def main():
 
     board.next_round()
 
-    debug_board_status(board.board_list)
+    debug_board(board.board_list)
 
     while True:
         # Reset:
@@ -204,20 +253,24 @@ def main():
                 square_availability = board.check_board_availability(
                     sel_square_pos[0], sel_square_pos[1])
 
-                print("".format())
-
                 if square_availability == True:
 
+                    # Assign current player to the square:
                     board.board_list[sel_square_pos[0]
                                      ][sel_square_pos[1]] = board.current_player
 
-                    if board.check_win() == True:
-                        board.player_win()
+                    print(board.board_list)
+
+                    win_check = check_win(
+                        board.board_list, board.current_player)
+
+                    if win_check == True:
+                        board.player_win(board.current_player)
                         board.next_round()
                     else:
                         board.next_turn()
 
-                debug_board_status(board.board_list)
+                debug_board(board.board_list)
 
                 # VISUALS
 
