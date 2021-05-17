@@ -19,7 +19,7 @@ FPS = 10
 
 
 def debug_board(board_list):
-    print(board_list)
+    print("{}\n{}\n{}".format(board_list[0], board_list[1], board_list[2]))
 
 
 class Board:
@@ -32,11 +32,6 @@ class Board:
 
         # Corresponds to the board list. Marks top corner of each
         # square on board.
-        self.board_display_pos = [
-            ["", "", ""],
-            ["", "", ""],
-            ["", "", ""]
-        ]
 
         self.player_x = "X"
         self.player_o = "O"
@@ -62,23 +57,24 @@ class Board:
             print("Available for selection.")
             return True
 
+    def assign_value_to_board(self, value, row, column):
+        self.board_list[row][column] = value
+
     def next_turn(self):
 
-        print("Updating turn.")
+        print("Updating turn. \n")
         # Switching players:
         if self.current_player == self.player_x:
             self.current_player = self.player_o
         elif self.current_player == self.player_o:
-            self.current_player = self.player_x
-        elif self.current_player == None:
             self.current_player = self.player_x
 
         # Increment turn count:
         self.turn += 1
 
         # Inform player about turn:
-        print("Turn #{}. Player {} turn:".format(
-            self.turn, self.current_player))
+        print("Round #{}, turn #{}. Player {} turn:".format(self.round,
+                                                            self.turn, self.current_player))
 
     def next_round(self):
         # Resetting board
@@ -126,7 +122,11 @@ def draw_display(game_display):
                        (DISPLAY_WIDTH, int(DISPLAY_HEIGHT * 0.66)))
 
 
-def sel_square_position(m_pos):
+def get_selected_square(m_pos):
+    """
+    sel_square_position(m_pos) returns tuple with row pos and column pos
+    """
+
     # Gets the list adress for the board squares based on the mouseclick pos.
     if m_pos != [[None], [None]]:
         print("Mouse x pos is {}, and mouse y pos is {}.".format(
@@ -134,24 +134,24 @@ def sel_square_position(m_pos):
 
         # Get which row in board list from mouse click y pos:
         if m_pos[1] < 100 and m_pos[1] >= 0:
-            sel_row = 0
+            row = 0
         elif m_pos[1] < 200:
-            sel_row = 1
+            row = 1
         elif m_pos[1] < 301:
-            sel_row = 2
+            row = 2
 
         # Get which position in row from mouse click x pos:
         if m_pos[0] < 100 and m_pos[1] >= 0:
-            sel_pos_in_row = 0
+            column = 0
         elif m_pos[0] < 200:
-            sel_pos_in_row = 1
+            column = 1
         elif m_pos[0] < 301:
-            sel_pos_in_row = 2
+            column = 2
 
         print("Based on mouse input, Row is {} and Column is {}.".format(
-            sel_row, sel_pos_in_row))
+            row, column))
 
-        return sel_row, sel_pos_in_row
+        return row, column
 
 
 def check_win(board, sel_player):
@@ -164,13 +164,13 @@ def check_win(board, sel_player):
         for i in range(len(board)):
             win_combo.append(sel_player)
 
-        print('\nWinning combination is: {}\n'.format(win_combo))
+        # print('\nWinning combination is: {}\n'.format(win_combo))
         return win_combo
 
     def check_rows_for_win(board, winning_combo):
         for i in range(len(board)):
 
-            print('Row #{} contains: {}'.format(i, board[i]))
+            # print('Row #{} contains: {}'.format(i, board[i]))
 
             if board[i] == winning_combo:
                 print("Horizontal win.")
@@ -182,7 +182,7 @@ def check_win(board, sel_player):
             column = [board[0][i]] + \
                 [board[1][i]] + [board[2][i]]
 
-            print('Column #{} contains: {}'.format(i, column))
+            # print('Column #{} contains: {}'.format(i, column))
 
             if column == winning_combo:
                 print("Vertical win.")
@@ -194,7 +194,7 @@ def check_win(board, sel_player):
         diagonal_top_to_bottom = []
         for i in range(len(board)):
             diagonal_top_to_bottom.insert(i, board[i][i])
-        print('Diagonal top to bottom contains {}'.format(diagonal_top_to_bottom))
+        # print('Diagonal top to bottom contains {}'.format(diagonal_top_to_bottom))
 
         # Diagonal bottom to top
         diagonal_bottom_to_top = []
@@ -203,7 +203,7 @@ def check_win(board, sel_player):
 
             diagonal_bottom_to_top.insert(
                 i, board[i][board_index])
-        print('Diagonal bottom to top contains {}'.format(diagonal_bottom_to_top))
+        # print('Diagonal bottom to top contains {}'.format(diagonal_bottom_to_top))
 
         if diagonal_top_to_bottom == winning_combo or diagonal_bottom_to_top == winning_combo:
             print("Diagonal win.")
@@ -226,7 +226,6 @@ def main():
     game_display = pygame.display.set_mode((DISPLAY_WIDTH,
                                             DISPLAY_HEIGHT))
     pygame.display.set_caption('Tic-Tac-Toe')
-
     board = Board()
 
     board.next_round()
@@ -234,30 +233,22 @@ def main():
     debug_board(board.board_list)
 
     while True:
-        # Reset:
-
         # Game start:
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
             # Checks if mouse click on display surface (pygame event code 1025):
             if event.type == 1025:
-                sel_square_pos = sel_square_position(pygame.mouse.get_pos())
-
-                print("sel_square_pos contains value:".format(sel_square_pos))
-
-                square_availability = board.check_board_availability(
-                    sel_square_pos[0], sel_square_pos[1])
-
-                if square_availability == True:
+                sel_square = get_selected_square(pygame.mouse.get_pos())
+                print("sel_square contains value: {}".format(sel_square))
+                if board.check_board_availability(
+                        sel_square[0], sel_square[1]) == True:
 
                     # Assign current player to the square:
-                    board.board_list[sel_square_pos[0]
-                                     ][sel_square_pos[1]] = board.current_player
+                    board.assign_value_to_board(
+                        board.current_player, sel_square[0], sel_square[1])
 
                     print(board.board_list)
 
@@ -266,6 +257,10 @@ def main():
 
                     if win_check == True:
                         board.player_win(board.current_player)
+                        debug_board(board.board_list)
+                        board.next_round()
+                    elif board.turn >= 9:
+                        print("It's a draw.\n\n")
                         board.next_round()
                     else:
                         board.next_turn()
