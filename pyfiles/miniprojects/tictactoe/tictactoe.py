@@ -9,12 +9,14 @@ googling solutions for
 import pygame
 import sys
 
+pygame.init()
+
 COLOR_BLACK = (0, 0, 0)
 COLOR_GREY = (125, 125, 125)
 COLOR_WHITE = (255, 255, 255)
 
-DISPLAY_WIDTH = 300
-DISPLAY_HEIGHT = 300
+DISPLAY_WIDTH = 100 * 3
+DISPLAY_HEIGHT = 100 * 3
 FPS = 10
 
 
@@ -104,7 +106,10 @@ class Board:
         print("\nPlayer {} wins the round!\n".format(self.current_player))
 
 
-def draw_display(game_display):
+def draw_display(game_display, board_list):
+
+    font = pygame.font.Font('freesansbold.ttf', 32)
+
     game_display.fill(COLOR_BLACK)
     # Drawing vertical lines:
     pygame.draw.aaline(game_display, COLOR_WHITE,
@@ -120,6 +125,23 @@ def draw_display(game_display):
     pygame.draw.aaline(game_display, COLOR_WHITE,
                        (0, int(DISPLAY_HEIGHT * 0.66)),
                        (DISPLAY_WIDTH, int(DISPLAY_HEIGHT * 0.66)))
+
+    # Iterates through the board_list and draws the symbols on the visual
+    # board:
+
+    for row_index in range(len(board_list)):
+        for column_index in range(len(board_list[0])):
+            symbol = board_list[row_index][column_index]
+
+            # Magic numbers represent the pixel offset
+            x_pos = column_index * 100 + 50
+            y_pos = row_index * 100 + 50
+
+            symbol_text = font.render(symbol, True, COLOR_WHITE, COLOR_BLACK)
+            textRect = symbol_text.get_rect()
+            textRect.center = (x_pos, y_pos)
+
+            game_display.blit(symbol_text, textRect)
 
 
 def get_selected_square(m_pos):
@@ -208,6 +230,8 @@ def check_win(board, sel_player):
         if diagonal_top_to_bottom == winning_combo or diagonal_bottom_to_top == winning_combo:
             print("Diagonal win.")
             return True
+        else:
+            return False
 
     # Running the nested functions
 
@@ -225,14 +249,19 @@ def main():
 
     game_display = pygame.display.set_mode((DISPLAY_WIDTH,
                                             DISPLAY_HEIGHT))
-    pygame.display.set_caption('Tic-Tac-Toe')
     board = Board()
-
     board.next_round()
+
+    # pygame.display.set_caption('Tic-Tac-Toe. Round #{}, Turn #{}. Player {} turn.'.format(
+    #     board.round, board.turn, board.current_player))
 
     debug_board(board.board_list)
 
     while True:
+
+        pygame.display.set_caption('Round #{}, Turn #{}. Player {} turn.'.format(
+            board.round, board.turn, board.current_player))
+
         # Game start:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -269,7 +298,7 @@ def main():
 
                 # VISUALS
 
-        draw_display(game_display)
+        draw_display(game_display, board.board_list)
 
         # pygame.display.flip()
 
