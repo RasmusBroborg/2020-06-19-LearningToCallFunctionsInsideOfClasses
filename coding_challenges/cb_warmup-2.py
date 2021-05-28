@@ -92,4 +92,53 @@ def last2(the_string):
     return count
 
 
+"""
+https://codingbat.com/prob/p166170
+Given an array of ints, return the number of 9's in the array.
+array_count9([1, 2, 9]) → 1
+array_count9([1, 9, 9]) → 2
+array_count9([1, 9, 9, 3, 9]) → 3
+"""
 
+
+def array_count9(nums):
+    iterator = 0
+    for element in nums:
+        if element == 9:
+            iterator += 1
+    return iterator
+
+
+"""
+https://codingbat.com/prob/p110166
+Given an array of ints, return True if one of the first 4 elements in the array
+is a 9. The array length may be less than 4.
+"""
+
+
+def array_front9(nums):
+    iterator = 0
+    for element in nums:
+        iterator += 1
+        if iterator > 4:
+            return False
+        if element == 9:
+            return True
+    return False
+
+
+"""
+https://codingbat.com/prob/p193604
+Given an array of ints, return True if the sequence of numbers 1, 2, 3 appears
+in the array somewhere.
+"""
+
+
+def array123(nums):
+    for i in range(len(nums)):
+        try:
+            if (nums[i], nums[i + 1], nums[i + 2]) == (1, 2, 3):
+                return True
+        except:
+            break
+    return False
