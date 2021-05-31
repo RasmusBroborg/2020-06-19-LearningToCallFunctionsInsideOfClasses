@@ -142,3 +142,26 @@ def array123(nums):
         except:
             break
     return False
+
+
+"""
+https://codingbat.com/prob/p182414
+Given 2 strings, a and b, return the number of the positions where they
+contain the same length 2 substring. So "xxcaazz" and "xxbaaz" yields 3,
+since the "xx", "aa", and "az" substrings appear in the same place in both
+strings.
+"""
+
+
+def string_match(a, b):
+    counter = 0
+    for i in range(len(a)):
+        try:
+            a_string = a[i] + a[i + 1]
+            b_string = b[i] + b[i + 1]
+            if a_string == b_string:
+                counter += 1
+        except:
+            break
+    return counter
+
