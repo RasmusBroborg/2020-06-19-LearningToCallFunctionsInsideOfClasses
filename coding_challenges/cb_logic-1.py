@@ -204,6 +204,23 @@ def in1to10(n, outside_mode):
             return True
     return False
 
+
 """
 https://codingbat.com/prob/p165321
+Given a non-negative number "num", return True if num is within 2 of a multiple
+of 10. Note: (a % b) is the remainder of dividing a by b, so (7 % 5) is 2. See
+also: Introduction to Mod
+
+near_ten(12) → True
+near_ten(17) → False
+near_ten(19) → True
 """
+
+
+def near_ten(num):
+    iterator = 2
+    for i in range(5):
+        if (num + iterator) % 10 == 0:
+            return True
+        iterator -= 1
+    return False
